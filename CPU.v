@@ -84,6 +84,8 @@ module CPU(out, clk, Reset, LoadInstructions, Instruction);
    wire [1:0]    EXMEM_MEMControl;
    wire [31:0]   MEM_Data;
    
+   wire [4:0] EXMemRegRd;
+   
    
    // Mem Wires
    wire [31:0]   MemAluOut;
@@ -99,9 +101,11 @@ module CPU(out, clk, Reset, LoadInstructions, Instruction);
    
    wire [31:0]   MemOut;
    
-   // Mem/WB
+   // Mem/WB Wires
    wire [1:0]    WB_WBControl;
    wire [31:0]   WBMemOut, WBAluOut;
+   
+   wire [4:0] MemWBRegRd;
    
    //WB Wires
    wire          RegWriteWB;
@@ -185,8 +189,8 @@ module CPU(out, clk, Reset, LoadInstructions, Instruction);
    
    mux2to1 ImmAluBMux(AluIB, IDEX_B, IDEX_Immediate, EX_AluSrc);
    
-   alu MarkAlu(IDEX_A,
-               AluIB,
+   alu MarkAlu(muxA_out,
+               muxB_out,
                EX_AluCntrlOut[3:0],
                EX_AluCntrlOut[8:4],
                AluResult,
@@ -204,8 +208,13 @@ module CPU(out, clk, Reset, LoadInstructions, Instruction);
    
    mux2to1_5bit RegDstMux(RegDestMuxOut, IDEX_Rt, IDEX_Rd, EX_RegDst);
    
-   ///////////////// Forwarding Unit //////////////////////////////////
+   wire [31:0] muxA_out, muxB_out; 
+   mux3to1_32bit MuxA(muxA_out, IDEX_A, MemAluOut, WriteBackData, MuxASelect);
    
+   mux3to1_32bit MuxB(muxB_out, AluIB, MemAluOut, WriteBackData, MuxBSelect);
+   
+   ///////////////// Forwarding Unit //////////////////////////////////
+   forwarding_unit FU(MuxASelect[1:0], MuxBSelect[1:0], IDEX_Rs, IDEX_Rt, MemDest, WriteBackDest);
    
    ////////////////   EX/MEM  /////////////////////////////////////////
    
