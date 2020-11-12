@@ -214,7 +214,7 @@ module CPU(out, clk, Reset, LoadInstructions, Instruction);
    mux3to1_32bit MuxB(muxB_out, AluIB, MemAluOut, WriteBackData, MuxBSelect);
    
    ///////////////// Forwarding Unit //////////////////////////////////
-   forwarding_unit FU(MuxASelect[1:0], MuxBSelect[1:0], IDEX_Rs, IDEX_Rt, MemDest, WriteBackDest);
+   forwarding_unit FU(MuxASelect[1:0], MuxBSelect[1:0], IDEX_Rs, IDEX_Rt, MemDest, WriteBackDest, MEM_RegWrite, RegWriteWB);
    
    ////////////////   EX/MEM  /////////////////////////////////////////
    

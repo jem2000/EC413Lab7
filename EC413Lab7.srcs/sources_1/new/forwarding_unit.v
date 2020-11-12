@@ -20,13 +20,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module forwarding_unit(ForwardA, ForwardB, Rs, Rt, ExMemReg, MemWBReg);
+module forwarding_unit(ForwardA, ForwardB, Rs, Rt, ExMemReg, MemWBReg, MemRegWrite, WBRegWrite);
 
 
 
 output reg [1:0] ForwardA, ForwardB;
 //forward 0 = no forward, forward 1 = ExMem forward, forward 2 = MemWB forward
 input [4:0] Rs, Rt, ExMemReg, MemWBReg; 
+input MemRegWrite, WBRegWrite;
 
 always @ (*) begin
 
@@ -97,7 +98,15 @@ if (ExMemReg == Rs && ExMemReg == Rt && MemWBReg == Rs && MemWBReg == Rt) begin 
     ForwardB = 2'b01; //change
 end
 
+if (ExMemReg == 0) //$0 write 
+    ForwardB = 2'b00;
+if (MemWBReg == 0) //$0 write 
+    ForwardA = 2'b00; 
 
-
+if (MemRegWrite == 0) 
+    ForwardA = 0;
+if (WBRegWrite == 0)
+    ForwardB = 0;
+    
 end
 endmodule
