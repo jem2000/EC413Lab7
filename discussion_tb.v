@@ -72,7 +72,12 @@ module discussion_tb;
       #10; // 10
       Instruction = 32'b000000_00111_00010_01000_00000_100000; // add R8, R7, R2
       #10; //
-		
+      
+      Instruction = 32'b000000_00010_00111_00000_00000_100000; // add R0, R7, R2 $0 write 
+      #10; 
+      Instruction = 32'b000000_00001_00000_01001_00000_100000; // add R9, R1, R0 
+      #10; 
+      
       LoadInstructions = 0;
       Reset = 1;
       #10;
